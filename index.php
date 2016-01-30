@@ -8,7 +8,7 @@
 date_default_timezone_set('Europe/Sofia');
 
 include 'car_classes.php';
-
+$cars = new car_classes;
 class PeriodCalc
 {
 
@@ -79,29 +79,65 @@ foreach ($seasons as $s => $k   ) {
         return $the_season;
 
     }
+
+
+function rentacar ($pick_up, $drop_off, $car_class) {
+//Count all days
+    $startTimeStamp = strtotime($pick_up);
+    $endTimeStamp = strtotime($drop_off);
+    $timeDiff = abs($endTimeStamp - $startTimeStamp);
+    $numberDays = $timeDiff / 86400;  // 86400 seconds in one day
+    // and you might want to convert to integer
+    $total_days = $numberDays;
+
+
+    //Find sesason
+    $seasons = $this->seasons;
+    foreach($seasons as $season => $key) {
+        $from = $key['from'];
+        $to = $key['to'];
+        if($pick_up >= $from && $drop_off <= $to){
+            return $season;
+        }
+    }
+
+    //find if this days are in more than one season
+    //Count days in this season
+
+   
+
 }
+
+
+
+
+
+}
+
+
 
 
 
 
 $booking = new PeriodCalc;
 
- 
 
 
-$pick_up = '2016-07-15';
-$drop_off = '2016-07-17';
+
+$pick_up = '2016-04-15';
+$drop_off = '2016-08-17';
 $days_booked = $booking->CalcTotal($pick_up,$drop_off,false);
 $car_class = 'FVMR';
 
-$cars = new car_classes();
 
-$all_cars = $cars->classes;
 
-echo $all_cars['MCMR']['LOW_SEASON']['7_14d'];
 
-echo "<br/>Car class " .$car_class;
+echo "<br/>Car class " .$car_class."<br/>";
 
-echo "<br/>Days: " . $booking->GetCarPrice($car_class, $day_pricez, $days_booked );
+///echo "<br/>Days: " . $booking->GetCarPrice($car_class, $day_pricez, $days_booked );
 
-echo "<br/> SEASON: " . $booking->which_season($pick_up,$drop_off,$car_class);
+
+echo "<br/> SEASON: " . $cars->rentacar($pick_up,$drop_off,$car_class);
+
+//echo "<br/> SEASON: " . $booking->which_season($pick_up,$drop_off,$car_class);
+

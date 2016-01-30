@@ -221,7 +221,7 @@ public $classes = array (
             '30_plus' => '4',
         ),
 
-    ),
+    ) ,
 
 
 
