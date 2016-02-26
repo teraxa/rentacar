@@ -12,29 +12,30 @@ include 'car_classes.php';
 $cars = new car_classes();
 
 
-class PeriodCalc
+class  PeriodCalc
 {
 
 
     public function __construct()
     {
-     //  echo 'The class "', __CLASS__, '" was initiated!<br />';
+        //  echo 'The class "', __CLASS__, '" was initiated!<br />';
     }
 
     public function __destruct()
     {
-      //  echo 'The class "', __CLASS__, '" was destroyed.<br />';
+        //  echo 'The class "', __CLASS__, '" was destroyed.<br />';
     }
 
 
-
-    function GetCarPrice($car_class, $day_prices, $days_booked) {
+    function GetCarPrice($car_class, $day_prices, $days_booked)
+    {
 
         $car_prices = $day_prices[$car_class][$days_booked];
 
 
         return $car_prices;
     }
+
 
     /**
      * @param $pick_up
@@ -52,120 +53,113 @@ class PeriodCalc
         // and you might want to convert to integer
         $total_days = $numberDays;
 
-      return $total_days;
+        return $total_days;
     }
 
+    /**
+     * @param $from
+     * @param $to
+     * @return string
+     * Fast and easy way to find out how many days
+     */
+    function count_days($from, $to)
+    {
 
-    function which_season ($pick_up, $drop_off, $car_class) {
-
-        $pick_up_date = strtotime($pick_up);
-        $drop_off_date = strtotime($drop_off);
-
-        $the_season = new car_classes;
-
-        $seasons = $the_season->seasons;
-
-foreach ($seasons as $s => $k) {
-
-    if($pick_up >= $k['from'] && $drop_off <= $k['to'] ) {
-        //echo "<br/>";
-        //echo "Car class " . $car_class . " from " . $k['from'] . " to " . $k['to'] . " and the season is ". $s . "<br/>";
-        //Maybe it'll be better to build an array instead of echoing :)
-        //We need only the Car Class and the Season
-
-        $the_season = $s;
-        $from = $k['from'];
-        $to = $k['to'];
-        $all_the_period_days = $this->TotalDays($from, $to);
-        $booked_days = $this->TotalDays($pick_up, $drop_off);
-        $left_days_from_period = $this->TotalDays($drop_off, $to);
-
-
-    }
-    //Check if in two seasons
-
-    if($pick_up >= $k['from'] && $drop_off > $k['to'] ) {
-        $the_season = $s;
-        $from = $k['from'];
-        $to = $k['to'];
-        $all_the_period_days = $this->TotalDays($from, $to);
-        $booked_days = $this->TotalDays($pick_up, $drop_off);
-        $left_days_from_period = $this->TotalDays($drop_off, $to);
-
-    }
-    $output = array(
-        'season' => $the_season,
-        'period_in_days' => $all_the_period_days,
-        'booked_days' => $booked_days,
-        'left_days_from_period' => $left_days_from_period,
-    );
-}
-
-
-
-        return $output;
+        $beginning = new DateTime($from);
+        $end = new DateTime($to);
+        $interval = $end->diff($beginning);
+// %a will output the total number of days.
+        return $interval->format('%a');
 
     }
 
 
-function rentacar ($pick_up, $drop_off, $car_class) {
-//Count all days
-    $startTimeStamp = strtotime($pick_up);
-    $endTimeStamp = strtotime($drop_off);
-    $timeDiff = abs($endTimeStamp - $startTimeStamp);
-    $numberDays = $timeDiff / 86400;  // 86400 seconds in one day
-    // and you might want to convert to integer
-    $total_days = $numberDays;
+    /**
+     * @param $pick_up
+     * @param $drop_off
+     * @param $period_start
+     * @param $period_end
+     * @return string
+     * Finds out if the particular season is 1/1 in season or 1/2
+     */
+    function count_seasons($pick_up, $drop_off, $period_start, $period_end)
+    {
+
+        $start = strtotime($pick_up);
+        $end = strtotime($drop_off);
+
+        $required_start = strtotime($period_start);
+        $required_end = strtotime($period_end);
 
 
-    //Find sesason
-    $seasons = $this->seasons;
-    foreach($seasons as $season => $key) {
-        $from = $key['from'];
-        $to = $key['to'];
-        if($pick_up >= $from && $drop_off <= $to){
-            return $season;
+        $if_in_period = '';
+        if ($end > $required_end or $end < $required_start) {
+            $if_in_period = "in_not_full";
         }
+
+        if ($start < $required_start or $start > $required_end) {
+            $if_in_period = "out";
+        }
+
+        if ($if_in_period != '') {
+            return $if_in_period;
+        }
+
+        if ($if_in_period == '') {
+            echo "in_full";
+        }
+
     }
 
-    //find if this days are in more than one season
-    //Count days in this season
-
-   
 
 }
-
-
-
-
-
-}
-
 
 
 $booking = new PeriodCalc;
 
 
-
-
-$pick_up = '2016-05-13';
-$drop_off = '2016-05-16';
-$days_booked = $booking->TotalDays($pick_up,$drop_off);
+$pick_up = '2016-01-16';
+$drop_off = '2016-01-19';
+$periods = new car_classes;
+$period = $periods->seasons;
 $car_class = 'FVMR';
 
+echo $booking->count_days($pick_up, $drop_off);
+echo "<br/>";
+echo $booking->count_seasons($pick_up, $drop_off, '2016-01-01', '2016-05-14');
+echo "<br/>";
+
+
+foreach ($period as $season => $from_to) {
+    $f = $from_to['from'];
+    $t = $from_to['to'];
+
+    $from = new DateTime($f);
+    $to = new DateTime($t);
+
+    $vzimane = new DateTime($pick_up);
+    $vrashtane = new DateTime($drop_off);
+
+    if ($vzimane >= $from and $vrashtane <= $to) {
+        $season1 = $season;
+    }
 
 
 
-echo "<br/>Total Days Booked " .$days_booked."<br/>";
-echo "<br/>Car class " .$car_class."<br/>";
-
-///echo "<br/>Days: " . $booking->GetCarPrice($car_class, $day_pricez, $days_booked );
 
 
-echo "<br/> SEASON: " . $cars->rentacar($pick_up,$drop_off,$car_class);
+}
+echo $season1 . " -1<br/>";
+echo $season2 . " -2<br/>";
 
-$output = $booking->which_season($pick_up,$drop_off,$car_class);
 
+//Debug
+/* echo $season ." ".$f. " - " . $t ."<br/>";
+  echo  "<b>".$pick_up . " - " . $drop_off ."<br/></b>";
+*/
+
+
+/*
 echo "<pre>";
-var_dump($output);
-echo "</pre>";
+var_dump($period);
+echo "</pre>";*/
