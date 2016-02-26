@@ -112,14 +112,15 @@ class  PeriodCalc
     }
 
 
+
 }
 
 
 $booking = new PeriodCalc;
 
 
-$pick_up = '2016-01-16';
-$drop_off = '2016-01-19';
+$pick_up = '2016-06-09';
+$drop_off = '2016-06-31';
 $periods = new car_classes;
 $period = $periods->seasons;
 $car_class = 'FVMR';
@@ -133,6 +134,7 @@ echo "<br/>";
 foreach ($period as $season => $from_to) {
     $f = $from_to['from'];
     $t = $from_to['to'];
+    $d = $from_to['total_days'];
 
     $from = new DateTime($f);
     $to = new DateTime($t);
@@ -142,15 +144,54 @@ foreach ($period as $season => $from_to) {
 
     if ($vzimane >= $from and $vrashtane <= $to) {
         $season1 = $season;
+        $booked_days = $booking->count_days($pick_up,$drop_off);
+        $booked_days_in_period = $booking->count_days($pick_up,$drop_off);
+        $left_days_from_period = $booking->count_days($drop_off,$t);
+
+        echo "<br/> The Whole Period Days: " . $d;
+        echo "<br/> Booked Days in period: " . $booked_days ;
+        echo "<br/> Left Days from this period: " . $left_days_from_period;
+        echo "<br/>". $season1;
+
+        if($left_days_from_period <= 0 ){
+          //echo "<br/> ". $period['MID_SEASON']['total_days'];
+
+///////// 
+            $array_keys = array_keys($seasons);
+
+            $search_index = array_search($search, $array_keys);
+
+            if (count($array_keys) > $search_index + 1)
+                $destination_key = $array_keys[$search_index + 1];
+            else
+                $destination_key = "";
+
+            echo $destination_key;
+ ////////////           
+            
+            echo "<pre>";
+            var_dump($period);
+            echo "</pre>";
+ 
+
+
+        }
+
     }
 
 
 
 
 
+
+
+
+
 }
-echo $season1 . " -1<br/>";
-echo $season2 . " -2<br/>";
+
+
+
+//echo "<br/> ".$season2 . " -2<br/>";
 
 
 //Debug
