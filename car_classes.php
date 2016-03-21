@@ -15,16 +15,19 @@ public $seasons = array(
     'LOW_SEASON' => array(
         'from' => '2016-01-10',
         'to'   => '2016-05-14',
+        'total_days'  => '125',
     ),
 
     'LOW_SEASON_2' => array(
         'from' => '2016-10-01',
         'to'   => '2016-12-14',
+        'total_days'  => '74',
     ),
 
     'MID_SEASON' => array(
         'from' => '2016-05-15',
         'to'   => '2016-06-31',
+        'total_days'  => '46',
     ),
 /*
     'MID_SEASON' => array(
@@ -35,12 +38,14 @@ public $seasons = array(
     'MID_SEASON_2' => array(
         'from' => '2016-12-06',
         'to'   => '2017-01-09',
+        'total_days'  => '34',
     ),
 
-   // 'HIGH_SEASON' => array(
-     //   'from' => '2016-07-01',
-     //   'to'   => '2016-08-31',
-   // )
+    'HIGH_SEASON' => array(
+         'from' => '2016-07-01',
+        'to'   => '2016-08-31',
+        'total_days'  => '61',
+    ),
 );
 
 
