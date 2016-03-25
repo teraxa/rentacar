@@ -326,6 +326,8 @@ $oneDay = 24 * 3600;
 $prices = array();
 foreach ($configs as $config) {
     $endTime = $config['endTime'];
+    $startTime = $config['startTime'];
+    $startTimeNew = date('Y-m-d', $startTime);
     $endTimeNew = date('Y-m-d', $endTime);
 
 
@@ -333,52 +335,42 @@ foreach ($configs as $config) {
     $date2    = new DateTime($endTimeNew);
     $date2 = $date2->modify('+1 day');
 
-    if($drop_off <= $endTimeNew){
-        $d = $all_days->find_days_type($pick_up, $drop_off);
-        echo $d;
+    //First Case
+    if($pick_up >= $startTimeNew and $drop_off <= $endTimeNew){
+        $d1 = $all_days->find_days_type($pick_up, $drop_off);
+
+        $days1 = $all_days->count_days($pick_up, $drop_off);
+        $price1 = $config['price']['QWER'][$d1];
+        $price2 = 0;
+
     }
 
+    //Second Case
     if($drop_off > $endTimeNew) {
-        $d = $all_days->find_days_type($endTimeNew, $drop_off);
-        echo $d;
+        $d1 = $all_days->find_days_type($pick_up, $endTimeNew);
+        $d2 = $all_days->find_days_type($endTimeNew, $drop_off);
+        $days1 = $all_days->count_days($pick_up, $endTimeNew);
+        $days2 = $all_days->count_days($endTimeNew, $drop_off);
+
+        $price1 = $config['price']['QWER'][$d1];
+        $price2 = $config['price']['QWER'][$d2];
+
     }
 
-
-    ///
-    $time1 = $config['startTime'];
-    $time2 = $config['endTime'];
-    $price = $config['price']['QWER'][$d];
-
-    while ($time1 <= $time2) {
-        $prices[date('Y-m-d', $time1)] = $price;
-        $time1 += $oneDay;
-    }
-}
-
-echo "<pre>";
-var_dump($prices);
-echo "</pre>";
-
-
-/**
- * @param $checkIn in format YYYY-mm-dd
- * @param $checkOut in format YYYY-mm-dd
- */
-function getTotalPrice($checkIn, $checkOut, $prices)
-{
-    $time1 = strtotime($checkIn);
-    $time2 = strtotime($checkOut);
-
-    $price = 0;
-    while ($time1 <= $time2) {
-        $time1 += 24 * 3600;
-        $price += $prices[date('Y-m-d', $time1)];
-    }
-
-    return $price;
 }
 
 
+echo "<br/> Period 1: " .$d1;
+echo " = " .$days1. " X " . $price1;
+
+echo "<br/> Period 2: " .$d2;
+echo " = " .$days2. " X " . $price2;
+
+$a = $price1 * $days1;
+$b = $price2 * $days2;
+$price = $a + $b;
+
+echo "<br/> In Total: ".$price;
 /////////////////
 
 
@@ -399,7 +391,6 @@ echo $booking->count_seasons($pick_up, $drop_off, $period);
 echo "<br/>";
 
 
-echo getTotalPrice($pick_up, $drop_off, $prices);
 
 
 ?>
